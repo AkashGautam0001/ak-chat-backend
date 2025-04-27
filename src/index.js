@@ -18,7 +18,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://chit-chat-iota-peach.vercel.app",
     credentials: true,
   })
 );
@@ -45,9 +45,9 @@ if (process.env.NODE_ENV === "production") {
 
 connectDB()
   .then(() => {
-    const port = process.env.PORT || 8000; 
+    const port = process.env.PORT || 8000;
     server.listen(port, () => {
-      console.log("Server is running on port " + port); 
+      console.log("Server is running on port " + port);
     });
   })
   .catch((error) => {
