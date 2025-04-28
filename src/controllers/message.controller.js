@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 import { Message } from "../models/message.models.js";
 import { uploadFileOnCloudinary } from "../lib/cloudinary.js";
 import mongoose from "mongoose";
-import fs from "fs"
+import fs from "fs";
 import { getReceiverSocketId, io } from "../utils/socket.js";
 
 export const getUserForSidebar = async (req, res) => {
@@ -26,7 +26,7 @@ export const getMessages = async (req, res) => {
 
     const messages = await Message.find({
       $or: [
-        { senderId: myId, receiverId: userToChatId },
+        { senderId: myId, receiverId: new ObjectId(userToChatId) },
         { senderId: new ObjectId(userToChatId), receiverId: myId },
       ],
     });
@@ -58,7 +58,7 @@ export const createMessage = async (req, res) => {
       senderId: myId,
       receiverId,
       text,
-      image: responseUrl?.secure_url || responseUrl?.url ||"",
+      image: responseUrl?.secure_url || responseUrl?.url || "",
     });
     if (imageUrl) {
       fs.unlink(imageUrl, (err) => {
@@ -66,8 +66,8 @@ export const createMessage = async (req, res) => {
       });
     }
     const receiverSocketId = getReceiverSocketId(receiverId);
-    if(receiverSocketId){
-      io.to(receiverSocketId).emit("newMessage",newMessage)
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
     return res.status(201).json(newMessage);
@@ -78,4 +78,3 @@ export const createMessage = async (req, res) => {
       .json({ message: error.message || "Internal Server Error" });
   }
 };
-
