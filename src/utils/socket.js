@@ -7,7 +7,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin:"https://chit-chat-iota-peach.vercel.app"
+    origin: "https://chit-chat-iota-peach.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
     userSocketMap[userId] = socket.id;
     socket.userId = userId;
   }
-  
+
   console.log(Object.keys(userSocketMap), userId, "map");
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
