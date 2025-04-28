@@ -36,24 +36,21 @@ export const signUp = async (req, res) => {
     });
 
     if (newUser) {
+      const cookieOptions = {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, //7days
+        sameSite: "Strict",
+        // secure: process.env.NODE_ENV != "development",
+      };
       const token = await generateToken(newUser._id, res);
-      //   const cookieOptions = {
-      //     httpOnly: true,
-      //     maxAge: 7 * 24 * 60 * 60 * 1000, //7days
-      //     sameSite: "Strict",
-      //     secure: process.env.NODE_ENV != "development",
-      //   };
 
       const createdUser = await User.findById(newUser._id).select("-password");
 
       if (createdUser) {
-        res
-          .status(201)
-          // .cookie("accessToken", token, cookieOptions)
-          .json({
-            data: createdUser,
-            message: "User created successfully",
-          });
+        res.status(201).cookie("accessToken", token, cookieOptions).json({
+          data: createdUser,
+          message: "User created successfully",
+        });
       } else {
         throw new ApiError(404, "Created User not found!");
       }
@@ -92,9 +89,9 @@ export const login = async (req, res) => {
     delete userData.password;
 
     await generateToken(existedUser._id, res);
-    res.status(200)
+    res
+      .status(200)
       .json({ data: userData, message: "User logged in successfully" });
-      
   } catch (error) {
     return res.status(500).json({
       message: error.message || "Internal Server Error",
